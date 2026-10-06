@@ -1,16 +1,16 @@
-name: Update IPAOMTK Repo
+name: Update Check0ver Repo
 
 on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout Repository
@@ -23,7 +23,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install requests
+          pip install requests beautifulsoup4
 
       - name: Run Scraper
         run: |
@@ -33,10 +33,5 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          if [ -f apps.json ]; then
-            git add apps.json
-            git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update apps.json" && git push)
-          else
-            echo "apps.json بوونی نییە!"
-            exit 1
-          fi
+          git add -A
+          git diff --staged --quiet || (git commit -m "Auto update apps.json" && git push)

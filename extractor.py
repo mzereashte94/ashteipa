@@ -3,73 +3,93 @@ import re
 import requests
 from datetime import datetime
 
-# المصادر وواجهات API البديلة لجلب بيانات تطبيقات IPAOMTK
-API_URL = "https://ipaomtk.com/api/apps"
-FALLBACK_URL = "https://raw.githubusercontent.com/swaggyP36000/TrollStore-IPAs/main/apps.json"
-
+# APIی فەرمیی ماڵپەڕی IPAOMTK بۆ دەرهێنانی پۆست و ئەپەکان
+WP_API_URL = "https://ipaomtk.com/wp-json/wp/v2/posts"
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
-    "Accept": "application/json, text/plain, */*"
+    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1"
 }
 
-def get_apps():
-    apps_list = []
-    
-    # المحاولة الأولى: جلب التطبيقات مباشرة من واجهة برمجة IPAOMTK
-    try:
-        res = requests.get(API_URL, headers=HEADERS, timeout=15)
-        if res.status_code == 200:
-            data = res.json()
-            raw_apps = data if isinstance(data, list) else data.get("apps", [])
-            for item in raw_apps:
-                d_url = item.get("downloadURL") or item.get("url") or item.get("download_url") or ""
-                if not d_url:
-                    continue
-                name = item.get("name", "Unknown App")
-                b_id = item.get("bundleIdentifier") or item.get("bundleID") or f"com.ipaomtk.{re.sub(r'[^a-zA-Z0-9]', '', name).lower()}"
-                
-                apps_list.append({
-                    "name": name,
-                    "bundleIdentifier": b_id,
-                    "developerName": item.get("developerName", "IPAOMTK"),
-                    "version": item.get("version", "1.0"),
-                    "versionDate": item.get("versionDate", datetime.now().strftime("%Y-%m-%d")),
-                    "downloadURL": d_url,
-                    "localizedDescription": item.get("localizedDescription") or item.get("description") or f"{name} by IPAOMTK",
-                    "iconURL": item.get("iconURL") or item.get("icon") or "https://ipaomtk.com/favicon.ico",
-                    "size": item.get("size", 0)
-                })
-    except Exception as e:
-        print(f"API Fetch failed: {e}")
+def extract_ipaomtk():
+    apps = []
+    seen_urls = set()
+    page = 1
 
-    # المحاولة الثانية: إذا كانت النتيجة فارغة، جلب التطبيقات المربوطة بسيرفر file.ipaomtk.com مباشرة
-    if not apps_list:
+    print("دەستکرا بە هێنانی ئەپ و یارییە فەرمییەکانی IPAOMTK...")
+
+    while True:
         try:
-            print("Fetching from mirror database...")
-            res = requests.get(FALLBACK_URL, headers=HEADERS, timeout=30)
-            if res.status_code == 200:
-                data = res.json()
-                raw_apps = data.get("apps", [])
-                for item in raw_apps:
-                    d_url = item.get("downloadURL", "")
-                    # تصفية التطبيقات الخاصة بـ ipaomtk أو إدراج كامل التطبيقات
-                    if "ipaomtk" in d_url or "ipaomtk" in item.get("developerName", "").lower():
-                        apps_list.append(item)
-                    elif len(apps_list) < 200: # ضمان عدم ترك المستودع فارغاً
-                        apps_list.append(item)
-        except Exception as e:
-            print(f"Fallback fetch failed: {e}")
+            params = {
+                "per_page": 50,
+                "page": page
+            }
+            res = requests.get(WP_API_URL, headers=HEADERS, params=params, timeout=20)
+            
+            if res.status_code != 200:
+                break
+                
+            posts = res.json()
+            if not posts or not isinstance(posts, list):
+                break
 
-    repo_structure = {
+            for post in posts:
+                content = post.get("content", {}).get("rendered", "")
+                title = post.get("title", {}).get("rendered", "App")
+                
+                # پاککردنەوەی ناوی ئەپەکە لە کۆدی HTML
+                clean_name = re.sub(r'<[^>]+>', '', title).strip()
+
+                # دۆزینەوەی لینکی داگرتن لەسەر سێرڤەری file.ipaomtk.com
+                ipa_links = re.findall(r'https?://file\.ipaomtk\.com/[^\s"\'<>]+\.ipa', content)
+                
+                if not ipa_links:
+                    # ئەگەر ناونیشانی تری هەبوو کە بە .ipa تەواو دەبێت
+                    ipa_links = re.findall(r'https?://[^\s"\'<>]+\.ipa', content)
+
+                for link in ipa_links:
+                    if link in seen_urls:
+                        continue
+                    seen_urls.add(link)
+
+                    # دۆزینەوەی ئایکۆنی وێنەی ئەپەکە
+                    img_match = re.search(r'<img[^>]+src=["\'](https?://[^"\']+)["\']', content)
+                    icon = img_match.group(1) if img_match else "https://ipaomtk.com/favicon.ico"
+
+                    bundle_id = "com.ipaomtk." + re.sub(r'[^a-zA-Z0-9]', '', clean_name).lower()
+
+                    apps.append({
+                        "name": clean_name,
+                        "bundleIdentifier": bundle_id,
+                        "developerName": "IPAOMTK",
+                        "version": "1.0",
+                        "versionDate": datetime.now().strftime("%Y-%m-%d"),
+                        "downloadURL": link,
+                        "localizedDescription": f"{clean_name} - فەرمی لە IPAOMTK",
+                        "iconURL": icon,
+                        "size": 0
+                    })
+
+            print(f"پەڕەی {page} تەواو بوو. کۆی گشتی تا ئێستا: {len(apps)}")
+            page += 1
+
+            # دەتوانیت ژمارەی پەڕەکان دیاری بکەیت (لێرەدا تا 5 پەڕە وەردەگرێت بۆ خێرایی)
+            if page > 5:
+                break
+
+        except Exception as e:
+            print(f"کێشە لە پەڕەی {page}: {e}")
+            break
+
+    # فۆرماتی تایبەتی ستانداردی AltStore / Feather
+    repo_data = {
         "name": "IPAOMTK Apps",
         "identifier": "com.ipaomtk.repo",
-        "apps": apps_list
+        "apps": apps
     }
 
     with open("apps.json", "w", encoding="utf-8") as f:
-        json.dump(repo_structure, f, ensure_ascii=False, indent=2)
+        json.dump(repo_data, f, ensure_ascii=False, indent=2)
 
-    print(f"Done! Successfully retrieved {len(apps_list)} apps.")
+    print(f"سەرکەوتوو بوو! بەستەری تەواوی {len(apps)} ئەپی ڕاستەقینەی IPAOMTK تۆمار کرا.")
 
 if __name__ == "__main__":
-    get_apps()
+    extract_ipaomtk()

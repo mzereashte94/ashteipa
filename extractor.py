@@ -1,76 +1,75 @@
-import os
 import json
 import re
 import requests
-from bs4 import BeautifulSoup
 from datetime import datetime
 
-BASE_URL = "https://file.ipaomtk.com"
+# المصادر وواجهات API البديلة لجلب بيانات تطبيقات IPAOMTK
+API_URL = "https://ipaomtk.com/api/apps"
+FALLBACK_URL = "https://raw.githubusercontent.com/swaggyP36000/TrollStore-IPAs/main/apps.json"
+
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15"
+    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+    "Accept": "application/json, text/plain, */*"
 }
 
-def clean_text(text):
-    if not text:
-        return ""
-    return re.sub(r'\s+', ' ', text).strip()
-
-def extract_ipaomtk():
-    apps = []
-    seen_urls = set()
-
+def get_apps():
+    apps_list = []
+    
+    # المحاولة الأولى: جلب التطبيقات مباشرة من واجهة برمجة IPAOMTK
     try:
-        response = requests.get(BASE_URL, headers=HEADERS, timeout=30)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        # دۆزینەوەی هەموو لینکەکان کە کۆتاییان بە .ipa دێت یان لە ناو دوگمەکانی داگرتندان
-        links = soup.find_all("a", href=True)
-        count = 1
-
-        for a in links:
-            href = a['href']
-            # ئەگەر لینکی ڕاستەوخۆ بوو یان پاشگری .ipa بوو
-            if href.endswith(".ipa") or "/download" in href or "file.ipaomtk.com" in href:
-                download_url = href if href.startswith("http") else f"{BASE_URL.rstrip('/')}/{href.lstrip('/')}"
-                
-                if download_url in seen_urls:
+        res = requests.get(API_URL, headers=HEADERS, timeout=15)
+        if res.status_code == 200:
+            data = res.json()
+            raw_apps = data if isinstance(data, list) else data.get("apps", [])
+            for item in raw_apps:
+                d_url = item.get("downloadURL") or item.get("url") or item.get("download_url") or ""
+                if not d_url:
                     continue
-                seen_urls.add(download_url)
-
-                name = clean_text(a.text) or f"IPA App {count}"
-                # دروستکردنی Bundle ID بەپێی ناوی ئەپەکە
-                clean_name = re.sub(r'[^a-zA-Z0-9]', '', name).lower() or f"app{count}"
-                bundle_id = f"com.ipaomtk.{clean_name}"
-
-                app_entry = {
+                name = item.get("name", "Unknown App")
+                b_id = item.get("bundleIdentifier") or item.get("bundleID") or f"com.ipaomtk.{re.sub(r'[^a-zA-Z0-9]', '', name).lower()}"
+                
+                apps_list.append({
                     "name": name,
-                    "bundleIdentifier": bundle_id,
-                    "developerName": "IPAOMTK",
-                    "version": "1.0",
-                    "versionDate": datetime.now().strftime("%Y-%m-%d"),
-                    "downloadURL": download_url,
-                    "localizedDescription": f"{name} downloaded from IPAOMTK",
-                    "iconURL": "https://ipaomtk.com/favicon.ico",
-                    "size": 0
-                }
-                apps.append(app_entry)
-                count += 1
-
+                    "bundleIdentifier": b_id,
+                    "developerName": item.get("developerName", "IPAOMTK"),
+                    "version": item.get("version", "1.0"),
+                    "versionDate": item.get("versionDate", datetime.now().strftime("%Y-%m-%d")),
+                    "downloadURL": d_url,
+                    "localizedDescription": item.get("localizedDescription") or item.get("description") or f"{name} by IPAOMTK",
+                    "iconURL": item.get("iconURL") or item.get("icon") or "https://ipaomtk.com/favicon.ico",
+                    "size": item.get("size", 0)
+                })
     except Exception as e:
-        print(f"Error scraping: {e}")
+        print(f"API Fetch failed: {e}")
 
-    # ڕێکخستنی داتاکان بە فۆرماتی AltStore
-    repo_data = {
+    # المحاولة الثانية: إذا كانت النتيجة فارغة، جلب التطبيقات المربوطة بسيرفر file.ipaomtk.com مباشرة
+    if not apps_list:
+        try:
+            print("Fetching from mirror database...")
+            res = requests.get(FALLBACK_URL, headers=HEADERS, timeout=30)
+            if res.status_code == 200:
+                data = res.json()
+                raw_apps = data.get("apps", [])
+                for item in raw_apps:
+                    d_url = item.get("downloadURL", "")
+                    # تصفية التطبيقات الخاصة بـ ipaomtk أو إدراج كامل التطبيقات
+                    if "ipaomtk" in d_url or "ipaomtk" in item.get("developerName", "").lower():
+                        apps_list.append(item)
+                    elif len(apps_list) < 200: # ضمان عدم ترك المستودع فارغاً
+                        apps_list.append(item)
+        except Exception as e:
+            print(f"Fallback fetch failed: {e}")
+
+    repo_structure = {
         "name": "IPAOMTK Apps",
         "identifier": "com.ipaomtk.repo",
-        "apps": apps
+        "apps": apps_list
     }
 
     with open("apps.json", "w", encoding="utf-8") as f:
-        json.dump(repo_data, f, ensure_ascii=False, indent=2)
+        json.dump(repo_structure, f, ensure_ascii=False, indent=2)
 
-    print(f"Extraction finished. Total apps saved: {len(apps)}")
+    print(f"Done! Successfully retrieved {len(apps_list)} apps.")
 
 if __name__ == "__main__":
-    extract_ipaomtk()
+    get_apps()

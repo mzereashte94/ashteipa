@@ -2,8 +2,8 @@ name: Update IPAOMTK Repo
 
 on:
   schedule:
-    - cron: '0 0 * * *' # هەموو ڕۆژێک جارێک کاتژمێر 12ی شەو بە ئۆتۆماتیک کار دەکات
-  workflow_dispatch: # دوگمەی دەستپێکردنی دەستیشت دەداتێ تا هەر کاتێک بتەوێت کەرەکە ڕابکێشیت
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install requests beautifulsoup4
+          pip install requests
 
       - name: Run Scraper
         run: |
@@ -33,5 +33,10 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add apps.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update IPAOMTK apps.json" && git push)
+          if [ -f apps.json ]; then
+            git add apps.json
+            git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update apps.json" && git push)
+          else
+            echo "apps.json بوونی نییە!"
+            exit 1
+          fi

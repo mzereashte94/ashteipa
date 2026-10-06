@@ -4,90 +4,81 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-# پەیجی ئەو بەشەی یارییەکان لە Check0ver
 TARGET_URL = "https://check0ver.net/en/iapps?filter[inCategories][0]=9c60f563-1983-42f0-8882-a26207bd4aaf"
-BASE_URL = "https://check0ver.net"
+
+# ئەگەر ئەکاونتت هەیە دەتوانی کۆکی ئەکاونتەکەت لێرە دابنێیت، ئەگەر نا بە بەتاڵی جێی بهێڵە
+SESSION_COOKIE = "" 
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Referer": "https://check0ver.net/en/iapps"
 }
 
-def resolve_direct_ipa(download_endpoint):
-    """ئەم فەنکشنە بەدوای Redirect دەگەڕێت بۆ دۆزینەوەی لینکی ڕاستەقینەی .ipa"""
+if SESSION_COOKIE:
+    HEADERS["Cookie"] = SESSION_COOKIE
+
+def get_direct_ipa(uuid):
+    download_api = f"https://check0ver.net/api/iapps/{uuid}/download"
     try:
-        # بەکارهێنانی HEAD یان GET تا لینکی کۆتایی وەربگرین
-        res = requests.get(download_endpoint, headers=HEADERS, allow_redirects=True, timeout=12, stream=True)
-        final_url = res.url
-        # داخستنی پەیوەندی پێش ئەوەی فایلی گەورە دابەزێنێت
-        res.close()
-        
-        if ".ipa" in final_url:
-            return final_url
+        # پەیوەندی بە سیستەمی داگرتن بۆ وەرگرتنی لینکی کۆتایی
+        res = requests.get(download_api, headers=HEADERS, allow_redirects=False, timeout=10)
+        # ئەگەر ڕەوانەی کردیت بۆ فایلی .ipa لە ڕێگەی Location Header
+        if res.status_code in [301, 302, 303, 307] and "Location" in res.headers:
+            loc = res.headers["Location"]
+            if ".ipa" in loc:
+                return loc
+        elif res.status_code == 200 and ".ipa" in res.url:
+            return res.url
     except Exception as e:
-        print(f"نەتوانرا بەستەری ڕاستەوخۆ دەربهێنرێت بۆ {download_endpoint}: {e}")
+        print(f"Error resolving: {e}")
     return None
 
-def extract_games():
+def main():
     apps = []
 
-    print("دەستکرا بە هێنانی داتای پەیجەکە...")
     try:
-        res = requests.get(TARGET_URL, headers=HEADERS, timeout=25)
-        if res.status_code != 200:
-            print("هەڵە لە کردنەوەی پەیجەکە")
-            return
+        res = requests.get(TARGET_URL, headers=HEADERS, timeout=20)
+        if res.status_code == 200:
+            soup = BeautifulSoup(res.text, "html.parser")
+            app_div = soup.find("div", {"id": "app"})
+            
+            if app_div and app_div.get("data-page"):
+                page_data = json.loads(app_div["data-page"])
+                items = page_data.get("props", {}).get("paginator", {}).get("data", [])
 
-        soup = BeautifulSoup(res.text, "html.parser")
-        
-        # دۆزینەوەی داتای JSONی ناو Inertia/Vue لەناو div#app
-        app_div = soup.find("div", {"id": "app"})
-        if not app_div or not app_div.get("data-page"):
-            print("داتای پەیجەکە نەدۆزرایەوە!")
-            return
+                for item in items:
+                    name = item.get("name", "Unknown Game")
+                    uuid = item.get("uuid")
+                    bundle = item.get("bundle", f"com.check0ver.{re.sub(r'[^a-zA-Z0-9]', '', name).lower()}")
+                    ver = item.get("version", "1.0")
+                    desc = item.get("description", "")
+                    icon = item.get("image", "https://check0ver.net/favicon.ico")
 
-        page_data = json.loads(app_div["data-page"])
-        items = page_data.get("props", {}).get("paginator", {}).get("data", [])
+                    if not uuid:
+                        continue
 
-        print(f"دۆزرایەوە: {len(items)} یاری لەم پەیجەدا.")
+                    direct_link = get_direct_ipa(uuid)
 
-        for item in items:
-            name = item.get("name", "Unknown Game")
-            uuid = item.get("uuid")
-            bundle = item.get("bundle") or f"com.check0ver.{re.sub(r'[^a-zA-Z0-9]', '', name).lower()}"
-            version = item.get("version", "1.0")
-            desc = item.get("description", "")
-            icon = item.get("image", "https://check0ver.net/favicon.ico")
+                    # ئەگەر سێرڤەرەکە لینکی ڕاستەوخۆی نەدات بەهۆی لۆگینەوە، 
+                    # لە جیاتی ئەوەی فایلەکە بەتاڵ بێت، لینکی داگرتن ڕاستەوخۆ دەخاتە ناو فایلەکە
+                    final_download = direct_link if direct_link else f"https://check0ver.net/api/iapps/{uuid}/download"
 
-            if not uuid:
-                continue
-
-            download_endpoint = f"https://check0ver.net/api/iapps/{uuid}/download"
-            print(f"خەریکی دەرهێنانی لینکی ڕاستەوخۆی .ipa بۆ: {name}...")
-
-            direct_ipa_url = resolve_direct_ipa(download_endpoint)
-
-            # ئەگەر بە سەرکەوتوویی لینکی .ipaی هێنا
-            if direct_ipa_url:
-                apps.append({
-                    "name": name,
-                    "bundleIdentifier": bundle,
-                    "developerName": "Check0ver",
-                    "version": version,
-                    "versionDate": datetime.now().strftime("%Y-%m-%d"),
-                    "downloadURL": direct_ipa_url,
-                    "localizedDescription": desc,
-                    "iconURL": icon,
-                    "size": 0
-                })
-                print(f"سەرکەوتوو بوو: {name}")
-            else:
-                print(f"پێویستی بە لۆگین یان کۆدە: {name}")
+                    apps.append({
+                        "name": name,
+                        "bundleIdentifier": bundle,
+                        "developerName": "Check0ver",
+                        "version": ver,
+                        "versionDate": datetime.now().strftime("%Y-%m-%d"),
+                        "downloadURL": final_download,
+                        "localizedDescription": desc,
+                        "iconURL": icon
+                    })
 
     except Exception as e:
-        print(f"کێشە لە خوێندنەوە: {e}")
+        print(f"General error: {e}")
 
-    # ڕێکخستنی شێوازی فەرمیی AltStore بۆ Feather
+    # دروستکردنی فایلی کۆتایی
     repo_structure = {
         "name": "Check0ver Games",
         "identifier": "com.check0ver.games",
@@ -97,7 +88,7 @@ def extract_games():
     with open("apps.json", "w", encoding="utf-8") as f:
         json.dump(repo_structure, f, ensure_ascii=False, indent=2)
 
-    print(f"تەواو بوو! {len(apps)} فایلی ڕاستەوخۆی .ipa پاشەکەوت کران.")
+    print(f"تەواو بوو! {len(apps)} یاری خرانە ناو apps.json.")
 
 if __name__ == "__main__":
-    extract_games()
+    main()

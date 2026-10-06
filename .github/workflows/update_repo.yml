@@ -1,0 +1,37 @@
+name: Update IPAOMTK Repo
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # هەموو ڕۆژێک جارێک کاتژمێر 12ی شەو بە ئۆتۆماتیک کار دەکات
+  workflow_dispatch: # دوگمەی دەستپێکردنی دەستیشت دەداتێ تا هەر کاتێک بتەوێت کەرەکە ڕابکێشیت
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Run Scraper
+        run: |
+          python extractor.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add apps.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update IPAOMTK apps.json" && git push)

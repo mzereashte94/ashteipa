@@ -1,0 +1,286 @@
+{
+  "name": "Check0ver Games",
+  "identifier": "com.check0ver.games",
+  "apps": [
+    {
+      "name": "Hero Wars: Alliance Adventure",
+      "bundleIdentifier": "com.nexters.titanhunters",
+      "developerName": "Check0ver",
+      "version": "1.291.001",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/9c75846b-8cb7-40b8-90bf-ef3954ad03a4/download",
+      "localizedDescription": "- Damage Multiplier\n- Defense Multiplier",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/116242/512x512bb.jpg"
+    },
+    {
+      "name": "BagMaster Isekai – Bag Battle",
+      "bundleIdentifier": "com.DoorTeam.BagMaster",
+      "developerName": "Check0ver",
+      "version": "3.2.1",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a1574431-d66b-4299-84bf-7100432aaa4c/download",
+      "localizedDescription": "- Damage Multiplier\n- Never Die\n- Auto Win -> Hit or be hit.",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/133963/512x512bb.jpg"
+    },
+    {
+      "name": "Fitness RPG: Hero health game",
+      "bundleIdentifier": "com.shikudo.fitrpg",
+      "developerName": "Check0ver",
+      "version": "5.7.9",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/9fe6bd6b-9553-4a8f-bbbc-059b82292bd2/download",
+      "localizedDescription": "- ADS NO / Rewards Free\n- Super Card Active\n- Normal Card Active\n- Currency / NO Need\n- Resources / NO Need\n- DMG / When Opp Turn OFF",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/119746/512x512bb.jpg"
+    },
+    {
+      "name": "Color Block Jam",
+      "bundleIdentifier": "com.GybeGames.ColorBlockJam",
+      "developerName": "Check0ver",
+      "version": "9.1.0",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/9e3dc275-5b60-425e-91c3-bd1181619449/download",
+      "localizedDescription": "- Free Store (Buy then Cancel)",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/115011/512x512bb.jpg"
+    },
+    {
+      "name": "Piggy Go : Idle RPG",
+      "bundleIdentifier": "com.TrueSoft.SuperPigIdle",
+      "developerName": "Check0ver",
+      "version": "3.7.0",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a1162d39-17a0-449f-9e14-83bb3885d926/download",
+      "localizedDescription": "- Immortal\n- Currency Will Increase [ any type ] \n- Ads Remove",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/124615/512x512bb.jpg"
+    },
+    {
+      "name": "Legendary: Game of Heroes",
+      "bundleIdentifier": "com.n3twork.legendary",
+      "developerName": "Check0ver",
+      "version": "3.19.24",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a22bfe4d-e615-4e74-bb02-ad7ee877a4e3/download",
+      "localizedDescription": "- Inf.Skills → unlimited ability usage\n- One Hit Kill → defeat enemies instantly\n- Never Die → take no damage",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/153474/512x512bb.jpg"
+    },
+    {
+      "name": "K-POP Idol Producer",
+      "bundleIdentifier": "com.buildupstudio.idolproducer",
+      "developerName": "Check0ver",
+      "version": "2.51",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a034527d-ea07-44ee-97b6-d4bd6bec6ded/download",
+      "localizedDescription": "- Freeze Currencies",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/116951/512x512bb.jpg"
+    },
+    {
+      "name": "Airplane Manager Tycoon Empire",
+      "bundleIdentifier": "com.horusent.airplane.manager.tycoon",
+      "developerName": "Check0ver",
+      "version": "0.1.8",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a2935359-3d5f-4452-b1cf-030d313b1813/download",
+      "localizedDescription": "- Auto ADS NO → removes forced ad interruptions\n- Gems Enough → abundant premium currency for upgrades",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/161863/512x512bb.jpg"
+    },
+    {
+      "name": "Heroes vs Hordes: Survival RPG",
+      "bundleIdentifier": "com.swiftgames.roguelikesurvival",
+      "developerName": "Check0ver",
+      "version": "11.5.2",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/9c7ec0f8-5fc5-4f93-a34d-0ad2129eea35/download",
+      "localizedDescription": "- Currency\n- Resource\n- Gold Unlimited [ Bonus Wave ]\n- Ch Unlocked [ Play All Off ]\n- Always Last Wave\n- Talents Cost 0\n- Hero DMG Only\n- HP & DMG [ Just Equip & Unequip ]\n- Enemy Freeze\n- Enemy ATK NO",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/117362/512x512bb.jpg"
+    },
+    {
+      "name": "Color by Number：Coloring Games",
+      "bundleIdentifier": "com.fungames.colorbynumber",
+      "developerName": "Check0ver",
+      "version": "13.15.0",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a1ebbd25-8420-4a16-a360-3fcb4585d634/download",
+      "localizedDescription": "- PREMIUM",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/143679/512x512bb.jpg"
+    },
+    {
+      "name": "The Lone Necromancer: Idle RPG",
+      "bundleIdentifier": "com.lunosoft.nhnios",
+      "developerName": "Check0ver",
+      "version": "1.1.23",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/9e7a4727-ed07-4b85-b1c9-3cad9110f71b/download",
+      "localizedDescription": "- Damage Multiplier\n- Never Die\n- Reward/Loot Multiplier → Disable When Do Spending",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/120443/512x512bb.jpg"
+    },
+    {
+      "name": "Little Farm Story: Idle Tycoon",
+      "bundleIdentifier": "com.littlefarm.story",
+      "developerName": "Check0ver",
+      "version": "1.21.0",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a0e2448a-0670-4ca1-9165-6be0c6faf837/download",
+      "localizedDescription": "- Infinite Bag Capacity!\r\n- Infinite Daily Free Claim!\r\n- Worker don't spent resource!\r\n- Never Die",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/124439/512x512bb.jpg"
+    },
+    {
+      "name": "Arrow Rush: Archer Roguelike",
+      "bundleIdentifier": "hedonic.games.arrowrush.td",
+      "developerName": "Check0ver",
+      "version": "1.9.10",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a1fba609-ac6b-437b-850a-bc12beb7307d/download",
+      "localizedDescription": "- Unlimited Currencies\n- Debug Menu -> Head into Settings and toggle the Copy button.",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/146399/512x512bb.jpg"
+    },
+    {
+      "name": "Demon Hunter Idle",
+      "bundleIdentifier": "com.mobirix.mbpdh",
+      "developerName": "Check0ver",
+      "version": "1.27.0",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/9d4c4601-986d-4c8c-a2be-99db6e44b106/download",
+      "localizedDescription": "- Multiply Attack\n- Multiply Defense\n- Freeze Currencies",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/115068/512x512bb.jpg"
+    },
+    {
+      "name": "Candy Crush Saga",
+      "bundleIdentifier": "com.midasplayer.apps.candycrushsaga",
+      "developerName": "Check0ver",
+      "version": "1.338.0",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/9c727808-3242-4293-803b-062bc871f6ac/download",
+      "localizedDescription": "- Infinite Lives\n- Infinite Boosters",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/116180/512x512bb.jpg"
+    },
+    {
+      "name": "Trophy Hunter: Sniper Game",
+      "bundleIdentifier": "trophy.hunter.hunting.games.sniper.shooting",
+      "developerName": "Check0ver",
+      "version": "3.28.0",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a29430f4-5c3b-47ba-b3ef-6079485e2e09/download",
+      "localizedDescription": "- Animal Vitals ESP (Extra Sensory Perception, wallhack) Always On → see target weak points at all times",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/162016/512x512bb.jpg"
+    },
+    {
+      "name": "Dribble Hoops",
+      "bundleIdentifier": "com.wildbeep.dribblehoops",
+      "developerName": "Check0ver",
+      "version": "4.20.4",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a1dac3ea-69c1-4b04-a6a8-add05c3f0825/download",
+      "localizedDescription": "- Auto ADS NO\n- Unlimited Stars",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/141147/512x512bb.jpg"
+    },
+    {
+      "name": "Infinite Defense: Idle TD Game",
+      "bundleIdentifier": "com.horusent.infinite.defense",
+      "developerName": "Check0ver",
+      "version": "0.1.2",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a2c4b789-03d8-4e5b-8cb3-0b722b311613/download",
+      "localizedDescription": "- Dev Tool → advanced customization and control",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/166398/512x512bb.jpg"
+    },
+    {
+      "name": "Jelly Clicker: Idle Game",
+      "bundleIdentifier": "com.diggiverse.jellyclicker",
+      "developerName": "Check0ver",
+      "version": "1.3.1",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a2921d01-6c51-444c-9de1-65b58c462a50/download",
+      "localizedDescription": "- Unlimited Currency → spend freely on upgrades and unlocks\n- Unlimited Resources → craft and upgrade without limits\n\nNote: Chest Open All OFF When Use",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/161748/512x512bb.jpg"
+    },
+    {
+      "name": "Nature Board Game",
+      "bundleIdentifier": "com.northstargames.naturegame",
+      "developerName": "Check0ver",
+      "version": "1.0.65",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a1fb3d7b-2b85-44ec-b217-a3345deca900/download",
+      "localizedDescription": "- All DLCs Owned",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/146199/512x512bb.jpg"
+    },
+    {
+      "name": "Magic Tiles 3: Piano Game",
+      "bundleIdentifier": "com.amanotes.magictiles",
+      "developerName": "Check0ver",
+      "version": "13.097.008",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a0cbe9bf-8cc9-4037-98c3-42b079f3d9d6/download",
+      "localizedDescription": "- Infinite Currencies\r\n- Infinite Lives\r\n- No Ads\r\n- All Songs Unlocked\r\n- Premium",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/127732/512x512bb.jpg"
+    },
+    {
+      "name": "Pocket Love!",
+      "bundleIdentifier": "com.hyperbeard.pocketlove",
+      "developerName": "Check0ver",
+      "version": "4.7",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a1273131-ec1c-405d-8c98-428387c76bcc/download",
+      "localizedDescription": "- Infinite Currencies\n- Free iAP ( Turn on inside iOSGods Mod Menu first )",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/115057/512x512bb.jpg"
+    },
+    {
+      "name": "Stickman Legends Offline Games",
+      "bundleIdentifier": "com.zitga.ninja.stickman.legends",
+      "developerName": "Check0ver",
+      "version": "8.0.4",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a0207034-3988-4a33-b7ea-346cb5b515fe/download",
+      "localizedDescription": "- Free iAP\n- Never Die",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/119566/512x512bb.jpg"
+    },
+    {
+      "name": "My Talking Angela 2",
+      "bundleIdentifier": "com.outfit7.mytalkingangela2",
+      "developerName": "Check0ver",
+      "version": "26.5.3",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/9eaa380d-f593-4d23-bc18-6e9b3e9f4a2b/download",
+      "localizedDescription": "- Infinite Currencies\n- No Ads",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/127945/512x512bb.jpg"
+    },
+    {
+      "name": "Mystery Manor: hidden objects",
+      "bundleIdentifier": "com.gameinsight.ios.mmanor",
+      "developerName": "Check0ver",
+      "version": "7.200.0",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/9fe61386-2b82-43fb-acd6-797198e2b7ed/download",
+      "localizedDescription": "- Infinite Coins\n- Infinite Gems\n- Infinite Energy",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/116224/512x512bb.jpg"
+    },
+    {
+      "name": "The Battle Cats",
+      "bundleIdentifier": "jp.co.ponos.battlecatsen",
+      "developerName": "Check0ver",
+      "version": "15.6.1",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/9c80e8e3-df90-47e1-9c5c-5e2c44ac857c/download",
+      "localizedDescription": "- Infinite Cash\n- OHK Linked w/ Enemy\n- iGameGod Added",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/117175/512x512bb.jpg"
+    },
+    {
+      "name": "Draft Showdown",
+      "bundleIdentifier": "com.questlab.draftwar",
+      "developerName": "Check0ver",
+      "version": "1.17.1",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/9ee6e2cd-febe-4764-9f1a-4a4c215b6a4c/download",
+      "localizedDescription": "- Unlimited Resources\n- Never Die\n- One Hit Kill",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/120182/512x512bb.jpg"
+    },
+    {
+      "name": "X2 Blocks: Number Block Puzzle",
+      "bundleIdentifier": "com.inspiredsquare.blocks",
+      "developerName": "Check0ver",
+      "version": "434",
+      "versionDate": "2026-10-06",
+      "downloadURL": "https://check0ver.net/api/iapps/a0110cdd-4d67-4f94-a22b-19a6dff27970/download",
+      "localizedDescription": "- No Ads\n- Infinite Currency",
+      "iconURL": "https://public-cdn.check0ver.com/E669C4F905734AED2E9E/119616/512x512bb.jpg"
+    }
+  ]
+}

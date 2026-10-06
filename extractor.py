@@ -4,7 +4,8 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-TARGET_URL = "https://check0ver.net/en/iapps"
+# پەیجی ئەو بەشەی یارییەکان لە Check0ver
+TARGET_URL = "https://check0ver.net/en/iapps?filter[inCategories][0]=9c60f563-1983-42f0-8882-a26207bd4aaf"
 BASE_URL = "https://check0ver.net"
 
 HEADERS = {
@@ -12,79 +13,91 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
 }
 
-def run():
+def resolve_direct_ipa(download_endpoint):
+    """ئەم فەنکشنە بەدوای Redirect دەگەڕێت بۆ دۆزینەوەی لینکی ڕاستەقینەی .ipa"""
+    try:
+        # بەکارهێنانی HEAD یان GET تا لینکی کۆتایی وەربگرین
+        res = requests.get(download_endpoint, headers=HEADERS, allow_redirects=True, timeout=12, stream=True)
+        final_url = res.url
+        # داخستنی پەیوەندی پێش ئەوەی فایلی گەورە دابەزێنێت
+        res.close()
+        
+        if ".ipa" in final_url:
+            return final_url
+    except Exception as e:
+        print(f"نەتوانرا بەستەری ڕاستەوخۆ دەربهێنرێت بۆ {download_endpoint}: {e}")
+    return None
+
+def extract_games():
     apps = []
-    seen = set()
 
-    # لیستی سەرەکی بەرنامە فەرمییەکانی Check0ver
-    defaults = [
-        {"name": "WhatsApp Zero", "id": "whatsappzero", "ver": "26.34.74", "desc": "Activation code required • Freeze last seen • Hide blue ticks • Hidden chats"},
-        {"name": "WA Business Zero", "id": "wabusinesszero", "ver": "26.34.74", "desc": "Activation code required • WA Business Modded with Zero features"},
-        {"name": "SnapZero", "id": "snapzero", "ver": "14.11.0", "desc": "Audio saving/upload • Fake streak • Screenshot bypass • Incognito mode"},
-        {"name": "YouTube Zero", "id": "youtubezero", "ver": "21.22.4", "desc": "Download Videos • Background Play • No Ads • PiP • Shorts Download"},
-        {"name": "TikTok Zero", "id": "tiktokzero", "ver": "45.0.0", "desc": "Save photos and videos without watermark • Save stories"},
-        {"name": "Instagram Zero", "id": "instagramzero", "ver": "422.1.0", "desc": "Download media • Remove ads • Zoom profile pictures"},
-        {"name": "Jodel Zero", "id": "jodelzero", "ver": "7.189", "desc": "Complete Ban Bypass • Auto unban • Multiple accounts"}
-    ]
-
+    print("دەستکرا بە هێنانی داتای پەیجەکە...")
     try:
         res = requests.get(TARGET_URL, headers=HEADERS, timeout=25)
-        if res.status_code == 200:
-            soup = BeautifulSoup(res.text, "html.parser")
-            cards = soup.find_all(["div", "article"], class_=re.compile(r'(card|item|app)', re.I))
-            
-            for c in cards:
-                title = c.find(["h2", "h3", "h4", "h5", "strong", "a"])
-                if not title:
-                    continue
-                name = title.get_text(strip=True)
-                if not name or len(name) < 3 or name in seen or "Login" in name:
-                    continue
-                
-                seen.add(name)
-                clean_id = re.sub(r'[^a-zA-Z0-9]', '', name).lower()
-                
+        if res.status_code != 200:
+            print("هەڵە لە کردنەوەی پەیجەکە")
+            return
+
+        soup = BeautifulSoup(res.text, "html.parser")
+        
+        # دۆزینەوەی داتای JSONی ناو Inertia/Vue لەناو div#app
+        app_div = soup.find("div", {"id": "app"})
+        if not app_div or not app_div.get("data-page"):
+            print("داتای پەیجەکە نەدۆزرایەوە!")
+            return
+
+        page_data = json.loads(app_div["data-page"])
+        items = page_data.get("props", {}).get("paginator", {}).get("data", [])
+
+        print(f"دۆزرایەوە: {len(items)} یاری لەم پەیجەدا.")
+
+        for item in items:
+            name = item.get("name", "Unknown Game")
+            uuid = item.get("uuid")
+            bundle = item.get("bundle") or f"com.check0ver.{re.sub(r'[^a-zA-Z0-9]', '', name).lower()}"
+            version = item.get("version", "1.0")
+            desc = item.get("description", "")
+            icon = item.get("image", "https://check0ver.net/favicon.ico")
+
+            if not uuid:
+                continue
+
+            download_endpoint = f"https://check0ver.net/api/iapps/{uuid}/download"
+            print(f"خەریکی دەرهێنانی لینکی ڕاستەوخۆی .ipa بۆ: {name}...")
+
+            direct_ipa_url = resolve_direct_ipa(download_endpoint)
+
+            # ئەگەر بە سەرکەوتوویی لینکی .ipaی هێنا
+            if direct_ipa_url:
                 apps.append({
                     "name": name,
-                    "bundleIdentifier": f"com.check0ver.{clean_id}",
+                    "bundleIdentifier": bundle,
                     "developerName": "Check0ver",
-                    "version": "1.0",
+                    "version": version,
                     "versionDate": datetime.now().strftime("%Y-%m-%d"),
-                    "downloadURL": "https://check0ver.net/en/iapps",
-                    "localizedDescription": f"{name} - فەرمی لە Check0ver",
-                    "iconURL": "https://check0ver.net/favicon.ico",
+                    "downloadURL": direct_ipa_url,
+                    "localizedDescription": desc,
+                    "iconURL": icon,
                     "size": 0
                 })
-    except Exception as e:
-        print(f"Error scraping: {e}")
+                print(f"سەرکەوتوو بوو: {name}")
+            else:
+                print(f"پێویستی بە لۆگین یان کۆدە: {name}")
 
-    # ئەگەر ماڵپەڕەکە ڕێگری لێکرد، ئەپە فەرمییەکان پاشەکەوت دەکات تا فایلەکە بەتاڵ نەبێت
-    if len(apps) < len(defaults):
-        for item in defaults:
-            if item["name"] not in seen:
-                apps.append({
-                    "name": item["name"],
-                    "bundleIdentifier": f"com.check0ver.{item['id']}",
-                    "developerName": "Check0ver Zero",
-                    "version": item["ver"],
-                    "versionDate": datetime.now().strftime("%Y-%m-%d"),
-                    "downloadURL": "https://check0ver.net/en/iapps",
-                    "localizedDescription": item["desc"],
-                    "iconURL": "https://check0ver.net/favicon.ico",
-                    "size": 0
-                })
+    except Exception as e:
+        print(f"کێشە لە خوێندنەوە: {e}")
 
     # ڕێکخستنی شێوازی فەرمیی AltStore بۆ Feather
-    repo_data = {
-        "name": "Check0ver Apps",
-        "identifier": "com.check0ver.repo",
+    repo_structure = {
+        "name": "Check0ver Games",
+        "identifier": "com.check0ver.games",
         "apps": apps
     }
 
     with open("apps.json", "w", encoding="utf-8") as f:
-        json.dump(repo_data, f, ensure_ascii=False, indent=2)
+        json.dump(repo_structure, f, ensure_ascii=False, indent=2)
 
-    print(f"Done! Saved {len(apps)} apps successfully.")
+    print(f"تەواو بوو! {len(apps)} فایلی ڕاستەوخۆی .ipa پاشەکەوت کران.")
 
 if __name__ == "__main__":
-    run()
+    extract_games()
